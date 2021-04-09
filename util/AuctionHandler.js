@@ -35,8 +35,7 @@ module.exports = class AuctionHandler {
 
     this.getTotalAuctions().then(num => {
       this.totalPages = num;
-      this.getAuctions(this.totalPages).then(data => {
-        if (data) console.log("length", this.auctions.length)
+      this.getAuctions(this.totalPages).then(() => {
         this.filterAuctions().then(() =>
           this.comparePrices().then(() =>
             this.handleFlips()
@@ -55,7 +54,7 @@ module.exports = class AuctionHandler {
 
         if (sortedAuction.length == 2) {
           let difference = (sortedAuction[1].starting_bid - sortedAuction[0].starting_bid) * 0.96;
-          sortedAuction[0].diff = Math.floor((sortedAuction[1].starting_bid - sortedAuction[0].starting_bid) * 0.96);
+          sortedAuction[0].diff = Math.floor((sortedAuction[1].starting_bid - sortedAuction[0].starting_bid) - Math.floor(sortedAuction[1].starting_bid * 0.04));
           sortedAuction[0].next = sortedAuction[1].starting_bid;
           if (difference >= 500000 && difference < 1000000) this.fiveHundredFlips.push(sortedAuction[0]);
           else if (difference >= 1000000 && difference < 2000000) this.oneMillFlips.push(sortedAuction[0]);
@@ -67,7 +66,7 @@ module.exports = class AuctionHandler {
         } else {
           let average = (sortedAuction[1].starting_bid + sortedAuction[2].starting_bid) / 2;
           let difference = (average - sortedAuction[0].starting_bid) * 0.96;
-          sortedAuction[0].diff = Math.floor((sortedAuction[1].starting_bid - sortedAuction[0].starting_bid) * 0.96);
+          sortedAuction[0].diff = Math.floor((sortedAuction[1].starting_bid - sortedAuction[0].starting_bid) - Math.floor(sortedAuction[1].starting_bid * 0.04));
           sortedAuction[0].next = sortedAuction[1].starting_bid;
           if (difference >= 500000 && difference < 1000000) this.fiveHundredFlips.push(sortedAuction[0]);
           else if (difference >= 1000000 && difference < 2000000) this.oneMillFlips.push(sortedAuction[0]);
@@ -162,21 +161,33 @@ module.exports = class AuctionHandler {
       .setFooter("Made by Vigintillion and Thundeee")
       .setColor("#FFA500")
 
-    await this.client.guilds.cache.get("816049008082550834").channels.cache.get("823953523057492029").bulkDelete(1).catch(console.error);
-    await this.client.guilds.cache.get("816049008082550834").channels.cache.get("823953576891121674").bulkDelete(1).catch(console.error);
-    await this.client.guilds.cache.get("816049008082550834").channels.cache.get("823953598995496991").bulkDelete(1).catch(console.error);
-    await this.client.guilds.cache.get("816049008082550834").channels.cache.get("823953614941716531").bulkDelete(1).catch(console.error);
-    await this.client.guilds.cache.get("816049008082550834").channels.cache.get("829782642919866428").bulkDelete(1).catch(console.error);
-    await this.client.guilds.cache.get("816049008082550834").channels.cache.get("829782671017115648").bulkDelete(1).catch(console.error);
+    let guild = await this.client.guilds.cache.get("592680139767152640");
 
-    await this.client.guilds.cache.get("816049008082550834").channels.cache.get("823953523057492029").send(fiveHundredF)
-    await this.client.guilds.cache.get("816049008082550834").channels.cache.get("823953576891121674").send(oneMillF)
-    await this.client.guilds.cache.get("816049008082550834").channels.cache.get("823953598995496991").send(twoMillF)
-    await this.client.guilds.cache.get("816049008082550834").channels.cache.get("823953614941716531").send(fiveMillF)
-    await this.client.guilds.cache.get("816049008082550834").channels.cache.get("829782642919866428").send(tenMillF)
-    await this.client.guilds.cache.get("816049008082550834").channels.cache.get("829782671017115648").send(twentyMillF)
+    let fkChannel = guild.channels.cache.get("829784601576210442");
+    fkChannel.bulkDelete(1).catch(() => {});
+    fkChannel.send(fiveHundredF);
 
-    await this.client.guilds.cache.get("816049008082550834").channels.cache.get("816049008082550837").send("The scrape took " + Math.floor((Date.now() - this.start) / 1000) + " seconds")
+    let omChannel = guild.channels.cache.get("829784660418232330");
+    omChannel.bulkDelete(1).catch(() => {});
+    omChannel.send(oneMillF);
+
+    let tmChannel = guild.channels.cache.get("829784680244051988");
+    tmChannel.bulkDelete(1).catch(() => {});
+    tmChannel.send(twoMillF);
+
+    let fmChannel = guild.channels.cache.get("829784705322713109");
+    fmChannel.bulkDelete(1).catch(() => {});
+    fmChannel.send(fiveMillF);
+
+    let temChannel = guild.channels.cache.get("829784743448543362");
+    temChannel.bulkDelete(1).catch(() => {});
+    temChannel.send(tenMillF);
+
+    let twmChannel = guild.channels.cache.get("829786192068214844");
+    twmChannel.bulkDelete(1).catch(() => {});
+    twmChannel.send(twentyMillF);
+
+    guild.channels.cache.get("829789089775353957").send("The scrape took " + Math.floor((Date.now() - this.start) / 1000) + " seconds, compared a total of **" + this.auctions.length.toLocaleString() + "** auctions.")
   }
 
   turnToValidId(string) {
@@ -225,7 +236,6 @@ module.exports = class AuctionHandler {
 
   getTotalAuctions() {
     return new Promise(async(resolve, reject) => {
-      //const response = await axios.get(`https://api.hypixel.net/skyblock/auctions?key=${this.apiKeys[this.currentIndex]}`);
       await fetch(`https://api.hypixel.net/skyblock/auctions?key=${this.apiKeys[this.currentIndex]}`)
         .then(response => {
           if (response.headers.get("RateLimit-Remaining") <= 20) this.currentIndex++;
@@ -247,7 +257,6 @@ module.exports = class AuctionHandler {
     this.start = Date.now();
     return new Promise(async(resolve, reject) => {
       for (let i = 1; i < pages; i++) {
-        //const response = await axios.get(`https://api.hypixel.net/skyblock/auctions?key=${this.apiKeys[this.currentIndex]}&page=${i}`);
         await fetch(`https://api.hypixel.net/skyblock/auctions?key=${this.apiKeys[this.currentIndex]}&page=${i}`)
           .then(response => {
             if (response.headers.get("RateLimit-Remaining") <= 20) this.currentIndex++;
@@ -274,20 +283,21 @@ module.exports = class AuctionHandler {
   }
 
   validAuction(auc) {
-    if (auc.item_name.toLowerCase() === "enchanted book") return auc.bin && !auc.claimed
-    else return auc.bin &&
+    let toCheck = auc.item_name.toLowerCase().includes("✪") ? auc.item_name.toLowerCase().replace(/✪+/g, "").replace(/ /g, " ").slice(0, -1) : auc.item_name.toLowerCase();
+    if (toCheck.toLowerCase() === "enchanted book") return auc.hasOwnProperty("bin") && auc.bin && !auc.claimed
+    else return auc.bin === true &&
       !auc.claimed && ["RARE", "EPIC", "LEGENDARY", "MYTHIC"].includes(auc.tier) &&
       !auc.item_lore.toLowerCase().includes("cake soul") &&
-      !blackListed.includes([...valuableReforges, ...reforges].includes(auc.item_name.split(" ")[0].toLowerCase()) ? auc.item_name.toLowerCase().substr(auc.item_name.indexOf(" ") + 1) : auc.item_name.toLowerCase())
+      !blackListed.includes([...valuableReforges, ...reforges].includes(toCheck.split(" ")[0].toLowerCase()) ? toCheck.substr(toCheck.indexOf(" ") + 1) : toCheck.toLowerCase())
   }
 }
 
-const reforges = ["bizzare", "ominous", "simple", "strange", "pleasant", "shiny", "vivid", "pretty", "itchy", "keen", "unpleasant", "superior",
+const reforges = ["bizarre", "ominous", "simple", "strange", "pleasant", "shiny", "vivid", "pretty", "itchy", "keen", "unpleasant", "superior",
   "forceful", "hurtful", "strong", "demonic", "zealous", "godly", "gentle", "odd", "fast", "epic", "sharp", "heroic", "spicy", "legendary",
   "awkward", "rich", "fine", "neat", "hasty", "grand", "rapid", "deadly", "unreal", "smart", "clean", "fierce", "heavy", "light", "mythic",
   "titanic", "wise", "pure", "extremely", "perfect", "absolutly", "very", "shaded", "sweet", "silky", "bloody", "candied", "reinforced", "cubic", "warped",
   "undead", "ridiculous", "necrotic", "spiked", "loving", "giant", "ancient", "moil", "headstrong",
-  "precise", "fruitful", "magnetic", "fleet", "mithraic", "suspicious", "stellar", "jerry's", "dirty", "suspicious", "spiritual"
+  "precise", "fruitful", "magnetic", "fleet", "mithraic", "suspicious", "stellar", "jerry's", "dirty", "suspicious", "spiritual", "fair"
 ];
 
 const valuableReforges = ["submerged", "renowned", "withered", "empowered", "blessed", "toil", "refined", "fabled", "gilded"];
