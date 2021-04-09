@@ -1,4 +1,6 @@
 module.exports = [
+  "midas staff",
+  "midas' sword",
   "soulstealer bow",
   "dreadlord sword",
   "machine gun bow",
@@ -498,5 +500,6 @@ module.exports = [
 "jerry stone",
 "dragon claw",
 "beach ball minion skin",
-"colossal experience bottle upgrade"
+"colossal experience bottle upgrade",
+"stonk"
 ];
