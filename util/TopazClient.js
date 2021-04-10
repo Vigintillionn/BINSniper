@@ -82,46 +82,50 @@ class TopazClient extends Client {
    */
   async readyHandler() {
     console.log(chalk.green("ONLINE") + " | Topaz RPG is ready for use.");
-    //let auctionHandler = new AuctionHandler(this);
+    this.user.setActivity(`with the Auction House`, { type: 'PLAYING' })
+      //let auctionHandler = new AuctionHandler(this);
 
     let binScrape = schedule.scheduleJob('*/2 * * * *', async() => {
       console.log("Starting scrape")
-      this.auctionHandler.scrape()
+      this.auctionHandler.scrape();
+    });
+
+    let cleaner = schedule.scheduleJob('0 */3 * * *', async() => {
+      console.log("Clearing hidden flips")
+      this.auctionHandler.activeFlips = {};
+      this.auctionHandler.hideFlips = {};
     });
 
     let userChecker = schedule.scheduleJob('* * * * *', async() => {
       // Check all user's validity
       let users = await this.db.all();
-      for (const user of users) {
-        let u = await this.guilds.cache.get("816049008082550834").members.fetch(user.key.split("user-")[1]);
+      if (users && users.length > 0) {
+        for (const user of users) {
+          let u = await this.guilds.cache.get("592680139767152640").members.fetch(user.key.split("user-")[1]);
 
-        if (!user || !user.value || !user.value.expire) continue;
-        console.log(user.value.expire)
-        if (user.value.expire <= Date.now()) {
-          u.roles.remove(this.guilds.cache.get("816049008082550834").roles.cache.get("829836255755501569"));
-          this.db.set(user.key, { expire: false, reminders: false });
+          if (!user || !user.value || !user.value.expire) continue;
+          console.log(user.value.expire)
+          if (user.value.expire <= Date.now()) {
+            u.roles.remove(this.guilds.cache.get("592680139767152640").roles.cache.get("829785240658378752"));
+            this.db.set(user.key, { expire: false, reminders: false });
+          } else if (user.value.expire < Date.now() + 12 * 60 * 60 * 1000 && (!user.value.reminders || user.value.reminders === 3 || user.value.reminders < 3)) {
+            u.send("Your subscription for the BIN Bot will end in **12 hours**!");
+            user.value.reminders = 4;
+            this.db.set(user.key, user.value);
+          } else if (user.value.expire < Date.now() + 24 * 60 * 60 * 1000 && (!user.value.reminders || user.value.reminders === 2 || user.value.reminders < 2)) {
+            u.send("Your subscription for the BIN Bot will end in **1 day**!");
+            user.value.reminders = 3;
+            this.db.set(user.key, user.value);;
+          } else if (user.value.expire < Date.now() + 5 * 24 * 60 * 60 * 1000 && (!user.value.reminders || user.value.reminders === 1)) {
+            u.send("Your subscription for the BIN Bot will end in **5 days**!");
+            user.value.reminders = 2;
+            this.db.set(user.key, user.value);;
+          } else if (user.value.expire < Date.now() + 7 * 24 * 60 * 60 * 1000 && !user.value.reminders) {
+            u.send("Your subscription for the BIN Bot will end in **7 days**!");
+            user.value.reminders = 1;
+            this.db.set(user.key, user.value);;
+          } else continue;
         }
-        else if (user.value.expire < Date.now() + 12 * 60 * 60 * 1000 && (!user.value.reminders || user.value.reminders === 3 || user.value.reminders < 3)) {
-          u.send("Your subscription for the BIN Bot will end in **12 hours**!");
-          user.value.reminders = 4;
-          this.db.set(user.key, user.value);
-        }
-        else if (user.value.expire < Date.now() + 24 * 60 * 60 * 1000 && (!user.value.reminders || user.value.reminders === 2 || user.value.reminders < 2)) {
-          u.send("Your subscription for the BIN Bot will end in **1 day**!");
-          user.value.reminders = 3;
-          this.db.set(user.key, user.value);;
-        }
-        else if (user.value.expire < Date.now() + 5 * 24 * 60 * 60 * 1000 && (!user.value.reminders || user.value.reminders === 1)) {
-          u.send("Your subscription for the BIN Bot will end in **5 days**!");
-          user.value.reminders = 2;
-          this.db.set(user.key, user.value);;
-        }
-        else if (user.value.expire < Date.now() + 7 * 24 * 60 * 60 * 1000 && !user.value.reminders) {
-          u.send("Your subscription for the BIN Bot will end in **5 days**!");
-          user.value.reminders = 1;
-          this.db.set(user.key, user.value);;
-        }
-        else continue;
       }
     });
   }
@@ -230,3 +234,4 @@ class TopazClient extends Client {
 
 
 module.exports = TopazClient;
+this.auctionHandler.activeFlips = {};
