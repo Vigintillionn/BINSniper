@@ -16,7 +16,26 @@ module.exports = class AuctionHandler {
     this.currentIndex = 0;
     this.calls = 0;
 
+    this.activeFlips = {};
+    this.hideFlips = [];
+
     this.scrape()
+  }
+
+  clearHiddenFlips() {
+    let hiddenFlips = [...this.hideFlips];
+    return new Promise(async(resolve, reject) => {
+      for (let i = 0; i < hiddenFlips.length; i++) {
+        let flip = hiddenFlips[i];
+
+        if (!this.activeFlips[flip]) this.hideFlips.splice(i, 1);
+        else if (this.activeFlips[flip].end && this.activeFlips[flip].end <= Date.now()) {
+          delete this.activeFlips[flip];
+          this.hideFlips.splice(i, 1);
+        };
+      }
+      resolve(true);
+    })
   }
 
   scrape() {
@@ -33,15 +52,17 @@ module.exports = class AuctionHandler {
     this.tenMillFlips = [];
     this.twentyMillFlips = [];
 
-    this.getTotalAuctions().then(num => {
-      this.totalPages = num;
-      this.getAuctions(this.totalPages).then(() => {
-        this.filterAuctions().then(() =>
-          this.comparePrices().then(() =>
-            this.handleFlips()
-          ));
-      });
-    })
+    this.clearHiddenFlips().then(() => {
+      this.getTotalAuctions().then(num => {
+        this.totalPages = num;
+        this.getAuctions(this.totalPages).then(() => {
+          this.filterAuctions().then(() =>
+            this.comparePrices().then(() =>
+              this.handleFlips()
+            ));
+        });
+      })
+    });
   }
 
   comparePrices() {
@@ -51,6 +72,7 @@ module.exports = class AuctionHandler {
         if (auction.length <= 1) continue;
 
         let sortedAuction = auction.sort((a, b) => (a.starting_bid > b.starting_bid) ? 1 : -1);
+        if (this.hideFlips.includes(sortedAuction[0].uuid)) continue;
 
         if (sortedAuction.length == 2) {
           let difference = (sortedAuction[1].starting_bid - sortedAuction[0].starting_bid) * 0.96;
@@ -88,6 +110,10 @@ module.exports = class AuctionHandler {
     for (let i = 0; i < itFH; i++) {
       let auc = this.fiveHundredFlips[i];
       formatFiveH += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}% (tax included)\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
+
+      if (this.activeFlips[auc.uuid] && this.activeFlips[auc.uuid].timesAppeared >= 29) this.hideFlips.push(auc.uuid);
+      else if (this.activeFlips[auc.uuid]) this.activeFlips[auc.uuid].timesAppeared++;
+      else this.activeFlips[auc.uuid] = { timesAppeared: 0, end: auc.end };
     }
 
     let formatOneM = "";
@@ -96,6 +122,10 @@ module.exports = class AuctionHandler {
     for (let i = 0; i < itOM; i++) {
       let auc = this.oneMillFlips[i];
       formatOneM += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}% (tax included)\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
+
+      if (this.activeFlips[auc.uuid] && this.activeFlips[auc.uuid].timesAppeared >= 29) this.hideFlips.push(auc.uuid);
+      else if (this.activeFlips[auc.uuid]) this.activeFlips[auc.uuid].timesAppeared++;
+      else this.activeFlips[auc.uuid] = { timesAppeared: 0, end: auc.end };
     }
 
     let formatTwoM = "";
@@ -104,6 +134,10 @@ module.exports = class AuctionHandler {
     for (let i = 0; i < itTM; i++) {
       let auc = this.twoMillFlips[i];
       formatTwoM += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}% (tax included)\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
+
+      if (this.activeFlips[auc.uuid] && this.activeFlips[auc.uuid].timesAppeared >= 29) this.hideFlips.push(auc.uuid);
+      else if (this.activeFlips[auc.uuid]) this.activeFlips[auc.uuid].timesAppeared++;
+      else this.activeFlips[auc.uuid] = { timesAppeared: 0, end: auc.end };
     }
 
     let formatFiveM = "";
@@ -112,6 +146,10 @@ module.exports = class AuctionHandler {
     for (let i = 0; i < itFM; i++) {
       let auc = this.fiveMillFlips[i];
       formatFiveM += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}% (tax included)\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
+
+      if (this.activeFlips[auc.uuid] && this.activeFlips[auc.uuid].timesAppeared >= 29) this.hideFlips.push(auc.uuid);
+      else if (this.activeFlips[auc.uuid]) this.activeFlips[auc.uuid].timesAppeared++;
+      else this.activeFlips[auc.uuid] = { timesAppeared: 0, end: auc.end };
     }
 
     let formatTenM = "";
@@ -120,6 +158,10 @@ module.exports = class AuctionHandler {
     for (let i = 0; i < itTeM; i++) {
       let auc = this.tenMillFlips[i];
       formatTenM += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}% (tax included)\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
+
+      if (this.activeFlips[auc.uuid] && this.activeFlips[auc.uuid].timesAppeared >= 29) this.hideFlips.push(auc.uuid);
+      else if (this.activeFlips[auc.uuid]) this.activeFlips[auc.uuid].timesAppeared++;
+      else this.activeFlips[auc.uuid] = { timesAppeared: 0, end: auc.end };
     }
 
     let formatTwentyM = "";
@@ -128,6 +170,10 @@ module.exports = class AuctionHandler {
     for (let i = 0; i < itTwM; i++) {
       let auc = this.twentyMillFlips[i];
       formatTwentyM += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}% (tax included)\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
+
+      if (this.activeFlips[auc.uuid] && this.activeFlips[auc.uuid].timesAppeared >= 29) this.hideFlips.push(auc.uuid);
+      else if (this.activeFlips[auc.uuid]) this.activeFlips[auc.uuid].timesAppeared++;
+      else this.activeFlips[auc.uuid] = { timesAppeared: 0, end: auc.end };
     }
 
     let fiveHundredF = new Discord.MessageEmbed()
@@ -297,7 +343,7 @@ const reforges = ["bizarre", "ominous", "simple", "strange", "pleasant", "shiny"
   "awkward", "rich", "fine", "neat", "hasty", "grand", "rapid", "deadly", "unreal", "smart", "clean", "fierce", "heavy", "light", "mythic",
   "titanic", "wise", "pure", "extremely", "perfect", "absolutly", "very", "shaded", "sweet", "silky", "bloody", "candied", "reinforced", "cubic", "warped",
   "undead", "ridiculous", "necrotic", "spiked", "loving", "giant", "ancient", "moil", "headstrong",
-  "precise", "fruitful", "magnetic", "fleet", "mithraic", "suspicious", "stellar", "jerry's", "dirty", "suspicious", "spiritual", "fair"
+  "precise", "fruitful", "magnetic", "fleet", "mithraic", "suspicious", "stellar", "jerry's", "dirty", "suspicious", "spiritual", "fair", "salty", "treacherous"
 ];
 
 const valuableReforges = ["submerged", "renowned", "withered", "empowered", "blessed", "toil", "refined", "fabled", "gilded"];
@@ -307,25 +353,17 @@ const valuableEnchants = [
   "Critical VII" /*48.5m*/ , "Giant Killer VII" /*38.5m*/ , "Ender Slayer VII" /*33m*/ , "Power VII" /*30m*/ , "Smite VII" /*25m*/ , "Vicious V" /*24m*/ , "Protection VII" /*20.5m */ ,
   "Sharpness VII" /*20m*/ , "Legion V" /*20m */ , "Snipe IV ", "Soul Eater V", /*17.6m*/ , "Dragon Hunter V" /*14.4m*/ , "Overload V" /*12.8m */ , "Chance V " /*10m */ /*10m */ , "Legion IV" /*9.5m */ ,
   "Soul Eater IV" /*8.8m*/ , "Swarm V" /*8.8m*/ , "Dragon Hunter IV" /*7.2m*/ , "Overload IV" /*6.4m*/ , "Legion III" /*4.75m */ , "Growth VI" /*4.6M*/ , "Soul Eater III" /*4.4m*/ ,
-  "Swarm IV" /*4.4m*/ , "Protection VI" /*3.7M*/ , "Dragon Hunter III" /*3.6m*/ , "Rend IV" /*3.2m*/ , "Ultimate Wise V" /*2.5m*/ , "Legion II" /*2.375m */ ,
-  "Giant Killer VI" /*2.3m*/ , "Swarm III" /*2.2m*/ , "Soul Eater II" /*2.2m*/ , "Dragon Hunter II" /*1.8m*/ , "One For All I ", "Power VI" /*1.8m */ , "Overload II" /*1.6m*/ ,
-  "Rend III" /*1.6m*/ , "Sharpness VI" /*1.5m*/ , "Ender Slayer VI" /*1.4m*/ , "Sugar Rush III" /*1.4M*/ , "Cultivating X" /*unknown*/ , "Cultivating IX" /*unknown*/ ,
-  "Cultivating" /*1.3m */ , "Compact X" /*unknown*/ , "Compact IX" /*unknown*/ , "Compact" /*1.3m */ , "Expertise X" /*unknown*/ , "Expertise IX" /*unknown*/ ,
-  "Expertise" /*1.2m*/ , "Legion I" /*1.18m */ , "Soul Eater I" /*1.1m*/ , "Dragon Hunter I" /*900k*/
+  "Swarm IV" /*4.4m*/ , "Protection VI" /*3.7M*/ , , "One For All I ", "Cultivating X" /*unknown*/ , "Cultivating IX" /*unknown*/ ,
+  "Cultivating" /*1.3m */ , "Compact X" /*unknown*/ , "Compact IX" /*unknown*/ , "Compact" /*1.3m */ , "Expertise X" /*unknown*/ , "Expertise IX" /*unknown*/ , "Expertise" /*1.2m*/ ,
+
+
+  //"Power VI" /*1.8m */ , "Overload II" /*1.6m*/ ,
+  //"Rend III" /*1.6m*/ , "Sharpness VI" /*1.5m*/ , "Ender Slayer VI" /*1.4m*/ , "Sugar Rush III" /*1.4M*/ ,
+  //"Legion I" /*1.18m */ , "Soul Eater I" /*1.1m*/ , "Dragon Hunter I" /*900k*/
+  //"Dragon Hunter III" /*3.6m*/ , "Rend IV" /*3.2m*/ , "Ultimate Wise V" /*2.5m*/ , "Legion II" /*2.375m */ ,
+  //"Giant Killer VI" /*2.3m*/ , "Swarm III" /*2.2m*/ , "Soul Eater II" /*2.2m*/ , "Dragon Hunter II" /*1.8m*/
 ];
 
 const valuablePetItems = [ // Legendary: §6      Epic: §5       Rare: §3       Uncommon: §a     Common: §f 
-  "§6Tier Boost", "§3Dwarf Turtle Shelmet", "§5Minos Relic", "§6Reaper Gem", "§5Lucky clover", "§5Combat Exp Boost", "§5Fishing Exp Boost",
+  "§6Tier Boost", "§3Dwarf Turtle Shelmet", "§5Minos Relic",
 ];
-
-
-
-// Mzk2OTg1Njk1NTA5Njc2MDQy.WkjHvQ.kUecwSC-QHccrqaByONX1-RLRFo
-
-
-/* 
-500k-flips 823953523057492029  
-1m-flips 823953576891121674
-2m-flips 823953598995496991
-5m-flips 823953614941716531
-*/
