@@ -93,7 +93,7 @@ class TopazClient extends Client {
     let cleaner = schedule.scheduleJob('0 */3 * * *', async() => {
       console.log("Clearing hidden flips")
       this.auctionHandler.activeFlips = {};
-      this.auctionHandler.hideFlips = {};
+      this.auctionHandler.hideFlips = [];
     });
 
     let userChecker = schedule.scheduleJob('* * * * *', async() => {
