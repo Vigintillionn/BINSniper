@@ -300,22 +300,20 @@ const reforges = ["bizarre", "ominous", "simple", "strange", "pleasant", "shiny"
   "precise", "fruitful", "magnetic", "fleet", "mithraic", "suspicious", "stellar", "jerry's", "dirty", "suspicious", "spiritual", "fair"
 ];
 
-const valuableReforges = ["submerged", "renowned", "withered", "empowered", "blessed", "toil", "refined", "fabled", "gilded"];
+const valuableReforges = ["submerged", "renowned", "withered", "empowered", "toil", "fabled", "gilded"];
 
 const valuableEnchants = [
   "Chimera V" /*2.4b*/ , "Chimera IV" /*1.2b*/ , "Chimera III" /*600m*/ , "Chimera II" /*300m*/ , "Chimera I" /*150m*/ , "Growth VII" /*78m*/ ,
   "Critical VII" /*48.5m*/ , "Giant Killer VII" /*38.5m*/ , "Ender Slayer VII" /*33m*/ , "Power VII" /*30m*/ , "Smite VII" /*25m*/ , "Vicious V" /*24m*/ , "Protection VII" /*20.5m */ ,
   "Sharpness VII" /*20m*/ , "Legion V" /*20m */ , "Snipe IV ", "Soul Eater V", /*17.6m*/ , "Dragon Hunter V" /*14.4m*/ , "Overload V" /*12.8m */ , "Chance V " /*10m */ /*10m */ , "Legion IV" /*9.5m */ ,
   "Soul Eater IV" /*8.8m*/ , "Swarm V" /*8.8m*/ , "Dragon Hunter IV" /*7.2m*/ , "Overload IV" /*6.4m*/ , "Legion III" /*4.75m */ , "Growth VI" /*4.6M*/ , "Soul Eater III" /*4.4m*/ ,
-  "Swarm IV" /*4.4m*/ , "Protection VI" /*3.7M*/ , "Dragon Hunter III" /*3.6m*/ , "Rend IV" /*3.2m*/ , "Ultimate Wise V" /*2.5m*/ , "Legion II" /*2.375m */ ,
-  "Giant Killer VI" /*2.3m*/ , "Swarm III" /*2.2m*/ , "Soul Eater II" /*2.2m*/ , "Dragon Hunter II" /*1.8m*/ , "One For All I ", "Power VI" /*1.8m */ , "Overload II" /*1.6m*/ ,
-  "Rend III" /*1.6m*/ , "Sharpness VI" /*1.5m*/ , "Ender Slayer VI" /*1.4m*/ , "Sugar Rush III" /*1.4M*/ , "Cultivating X" /*unknown*/ , "Cultivating IX" /*unknown*/ ,
+  "Swarm IV" /*4.4m*/ , "Protection VI" /*3.7M*/, "One For All I ", "Cultivating X" /*unknown*/ , "Cultivating IX" /*unknown*/ ,
   "Cultivating" /*1.3m */ , "Compact X" /*unknown*/ , "Compact IX" /*unknown*/ , "Compact" /*1.3m */ , "Expertise X" /*unknown*/ , "Expertise IX" /*unknown*/ ,
-  "Expertise" /*1.2m*/ , "Legion I" /*1.18m */ , "Soul Eater I" /*1.1m*/ , "Dragon Hunter I" /*900k*/
+  "Expertise" /*1.2m*/
 ];
 
 const valuablePetItems = [ // Legendary: §6      Epic: §5       Rare: §3       Uncommon: §a     Common: §f 
-  "§6Tier Boost", "§3Dwarf Turtle Shelmet", "§5Minos Relic", "§6Reaper Gem", "§5Lucky clover", "§5Combat Exp Boost", "§5Fishing Exp Boost",
+  "§6Tier Boost", "§3Dwarf Turtle Shelmet", "§5Minos Relic"
 ];
 
 
