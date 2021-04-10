@@ -75,27 +75,24 @@ module.exports = class AuctionHandler {
         if (this.hideFlips.includes(sortedAuction[0].uuid)) continue;
 
         if (sortedAuction.length == 2) {
-          let difference = (sortedAuction[1].starting_bid - sortedAuction[0].starting_bid) * 0.96;
           sortedAuction[0].diff = Math.floor((sortedAuction[1].starting_bid - sortedAuction[0].starting_bid) - Math.floor(sortedAuction[1].starting_bid * 0.04));
           sortedAuction[0].next = sortedAuction[1].starting_bid;
-          if (difference >= 500000 && difference < 1000000) this.fiveHundredFlips.push(sortedAuction[0]);
-          else if (difference >= 1000000 && difference < 2000000) this.oneMillFlips.push(sortedAuction[0]);
-          else if (difference >= 2000000 && difference < 5000000) this.twoMillFlips.push(sortedAuction[0]);
-          else if (difference >= 5000000 && difference < 10000000) this.fiveMillFlips.push(sortedAuction[0]);
-          else if (difference >= 10000000 && difference < 20000000) this.tenMillFlips.push(sortedAuction[0]);
-          else if (difference >= 20000000) this.twentyMillFlips.push(sortedAuction[0]);
+          if (sortedAuction[0].diff >= 500000 && sortedAuction[0].diff < 1000000) this.fiveHundredFlips.push(sortedAuction[0]);
+          else if (sortedAuction[0].diff >= 1000000 && sortedAuction[0].diff < 2000000) this.oneMillFlips.push(sortedAuction[0]);
+          else if (sortedAuction[0].diff >= 2000000 && sortedAuction[0].diff < 5000000) this.twoMillFlips.push(sortedAuction[0]);
+          else if (sortedAuction[0].diff >= 5000000 && sortedAuction[0].diff < 10000000) this.fiveMillFlips.push(sortedAuction[0]);
+          else if (sortedAuction[0].diff >= 10000000 && sortedAuction[0].diff < 20000000) this.tenMillFlips.push(sortedAuction[0]);
+          else if (sortedAuction[0].diff >= 20000000) this.twentyMillFlips.push(sortedAuction[0]);
           else continue;
         } else {
-          let average = (sortedAuction[1].starting_bid + sortedAuction[2].starting_bid) / 2;
-          let difference = (average - sortedAuction[0].starting_bid) * 0.96;
           sortedAuction[0].diff = Math.floor((sortedAuction[1].starting_bid - sortedAuction[0].starting_bid) - Math.floor(sortedAuction[1].starting_bid * 0.04));
           sortedAuction[0].next = sortedAuction[1].starting_bid;
-          if (difference >= 500000 && difference < 1000000) this.fiveHundredFlips.push(sortedAuction[0]);
-          else if (difference >= 1000000 && difference < 2000000) this.oneMillFlips.push(sortedAuction[0]);
-          else if (difference >= 2000000 && difference < 5000000) this.twoMillFlips.push(sortedAuction[0]);
-          else if (difference >= 5000000 && difference < 10000000) this.fiveMillFlips.push(sortedAuction[0]);
-          else if (difference >= 10000000 && difference < 20000000) this.tenMillFlips.push(sortedAuction[0]);
-          else if (difference >= 20000000) this.twentyMillFlips.push(sortedAuction[0]);
+          if (sortedAuction[0].diff >= 500000 && sortedAuction[0].diff < 1000000) this.fiveHundredFlips.push(sortedAuction[0]);
+          else if (sortedAuction[0].diff >= 1000000 && sortedAuction[0].diff < 2000000) this.oneMillFlips.push(sortedAuction[0]);
+          else if (sortedAuction[0].diff >= 2000000 && sortedAuction[0].diff < 5000000) this.twoMillFlips.push(sortedAuction[0]);
+          else if (sortedAuction[0].diff >= 5000000 && sortedAuction[0].diff < 10000000) this.fiveMillFlips.push(sortedAuction[0]);
+          else if (sortedAuction[0].diff >= 10000000 && sortedAuction[0].diff < 20000000) this.tenMillFlips.push(sortedAuction[0]);
+          else if (sortedAuction[0].diff >= 20000000) this.twentyMillFlips.push(sortedAuction[0]);
           else continue;
         }
       }
