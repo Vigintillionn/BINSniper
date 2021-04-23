@@ -42,6 +42,8 @@ class TopazClient extends Client {
 
     this.admins = ["259776081316282368"];
 
+    this.development = true;
+
     this.db = new Database({
       development: false,
       name: "database",
@@ -82,15 +84,15 @@ class TopazClient extends Client {
    */
   async readyHandler() {
     console.log(chalk.green("ONLINE") + " | Topaz RPG is ready for use.");
+    if (this.development) return;
     this.user.setActivity(`with the Auction House`, { type: 'PLAYING' })
-      //let auctionHandler = new AuctionHandler(this);
 
     let binScrape = schedule.scheduleJob('*/2 * * * *', async() => {
       console.log("Starting scrape")
       this.auctionHandler.scrape();
     });
 
-    let cleaner = schedule.scheduleJob('0 */3 * * *', async() => {
+    let cleaner = schedule.scheduleJob('0 */4 * * *', async() => {
       console.log("Clearing hidden flips")
       this.auctionHandler.activeFlips = {};
       this.auctionHandler.hideFlips = [];
@@ -164,6 +166,8 @@ class TopazClient extends Client {
 
     let cmd = this.commands[command] || this.commands[this.aliases[command]];
     if (!cmd) return;
+
+    if (cmd.category === "admin" && !["183978195551387649", "259776081316282368"].includes(message.author.id)) return;
     await cmd.run(message, args);
   }
 
@@ -233,5 +237,4 @@ class TopazClient extends Client {
 }
 
 
-module.exports = TopazClient;
-this.auctionHandler.activeFlips = {};
+module.exports = TopazClient

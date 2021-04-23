@@ -27,7 +27,7 @@ module.exports = class PingCmd extends Command {
         this.client.db.set(`user-${user.id}`, userData);
         message.channel.send(`${args[1].toLowerCase() === "test" ? `Set ${user}'s subscription to` : `Gave ${user} a subscription for`} ${this.client.moment.duration(time, 'milliseconds').format("d [day(s)] h [hour(s)] m [minute(s)]")}`)
 
-        let flipRole = message.guild.roles.cache.get("829836255755501569");
+        let flipRole = message.guild.roles.cache.get("829785240658378752");
         if (flipRole && !user.roles.cache.has(flipRole.id)) user.roles.add(flipRole);
 
         if (args[1].toLowerCase() === "test") return user.send(`Your subscription for the BIN Bot was just set to **${this.client.moment.duration(time, 'milliseconds').format("d [day(s)] h [hour(s)] m [minute(s)]")}**\nFor more information look at <#829784596475412480>\nGood luck sniping!`)
