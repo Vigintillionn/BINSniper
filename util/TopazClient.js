@@ -42,7 +42,7 @@ class TopazClient extends Client {
 
     this.admins = ["259776081316282368"];
 
-    this.development = true;
+    this.development = false;
 
     this.db = new Database({
       development: false,

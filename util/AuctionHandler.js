@@ -11,7 +11,7 @@ module.exports = class AuctionHandler {
     this.client = client;
 
     this.apiKeys = ["ae52b0e2-7a2f-4802-9d60-f184953a8557", "cc9fdfe3-844a-450e-92d9-85350acb371c", "58b11091-469c-4893-8e02-49b9033a177d", "994bb87c-fbcb-4898-ab6d-0c91de24cc05",
-      "cdfcb25b-1fdf-4dcf-9e26-7172058d499c", "8b8b201a-c966-48fe-b338-4ba4b876f62a"
+      "cdfcb25b-1fdf-4dcf-9e26-7172058d499c"
     ]
     this.currentIndex = 0;
     this.calls = 0;
@@ -78,9 +78,9 @@ module.exports = class AuctionHandler {
         if (sortedAuction.length == 2) {
           sortedAuction[0].diff = Math.floor((sortedAuction[1].starting_bid - sortedAuction[0].starting_bid) - Math.floor(sortedAuction[1].starting_bid * 0.02));
           sortedAuction[0].next = sortedAuction[1].starting_bid;
-          if (sortedAuction[0].diff >= 500000 && sortedAuction[0].diff < 1000000) this.fiveHundredFlips.push(sortedAuction[0]);
-          else if (sortedAuction[0].diff >= 1000000 && sortedAuction[0].diff < 2000000) this.oneMillFlips.push(sortedAuction[0]);
-          else if (sortedAuction[0].diff >= 2000000 && sortedAuction[0].diff < 5000000) this.twoMillFlips.push(sortedAuction[0]);
+          if ((sortedAuction[0].diff >= 500000 && sortedAuction[0].diff < 1000000) && sortedAuction[0].starting_bid < 3000000) this.fiveHundredFlips.push(sortedAuction[0]);
+          else if ((sortedAuction[0].diff >= 1000000 && sortedAuction[0].diff < 2000000) && sortedAuction[0].starting_bid < 5000000) this.oneMillFlips.push(sortedAuction[0]);
+          else if ((sortedAuction[0].diff >= 2000000 && sortedAuction[0].diff < 5000000) && sortedAuction[0].starting_bid < 15000000) this.twoMillFlips.push(sortedAuction[0]);
           else if (sortedAuction[0].diff >= 5000000 && sortedAuction[0].diff < 10000000) this.fiveMillFlips.push(sortedAuction[0]);
           else if (sortedAuction[0].diff >= 10000000 && sortedAuction[0].diff < 20000000) this.tenMillFlips.push(sortedAuction[0]);
           else if (sortedAuction[0].diff >= 20000000 && sortedAuction[0].diff < 100000000) this.twentyMillFlips.push(sortedAuction[0]);
@@ -89,9 +89,9 @@ module.exports = class AuctionHandler {
         } else {
           sortedAuction[0].diff = Math.floor((sortedAuction[1].starting_bid - sortedAuction[0].starting_bid) - Math.floor(sortedAuction[1].starting_bid * 0.02));
           sortedAuction[0].next = sortedAuction[1].starting_bid;
-          if (sortedAuction[0].diff >= 500000 && sortedAuction[0].diff < 1000000) this.fiveHundredFlips.push(sortedAuction[0]);
-          else if (sortedAuction[0].diff >= 1000000 && sortedAuction[0].diff < 2000000) this.oneMillFlips.push(sortedAuction[0]);
-          else if (sortedAuction[0].diff >= 2000000 && sortedAuction[0].diff < 5000000) this.twoMillFlips.push(sortedAuction[0]);
+          if ((sortedAuction[0].diff >= 500000 && sortedAuction[0].diff < 1000000) && sortedAuction[0].starting_bid < 3000000) this.fiveHundredFlips.push(sortedAuction[0]);
+          else if ((sortedAuction[0].diff >= 1000000 && sortedAuction[0].diff < 2000000) && sortedAuction[0].starting_bid < 5000000) this.oneMillFlips.push(sortedAuction[0]);
+          else if ((sortedAuction[0].diff >= 2000000 && sortedAuction[0].diff < 5000000) && sortedAuction[0].starting_bid < 15000000) this.twoMillFlips.push(sortedAuction[0]);
           else if (sortedAuction[0].diff >= 5000000 && sortedAuction[0].diff < 10000000) this.fiveMillFlips.push(sortedAuction[0]);
           else if (sortedAuction[0].diff >= 10000000 && sortedAuction[0].diff < 20000000) this.tenMillFlips.push(sortedAuction[0]);
           else if (sortedAuction[0].diff >= 20000000 && sortedAuction[0].diff < 100000000) this.twentyMillFlips.push(sortedAuction[0]);
@@ -109,7 +109,7 @@ module.exports = class AuctionHandler {
     let itFH = this.fiveHundredFlips.length > 10 ? 10 : this.fiveHundredFlips.length;
     for (let i = 0; i < itFH; i++) {
       let auc = this.fiveHundredFlips[i];
-      formatFiveH += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}% (tax included)\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
+      formatFiveH += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}%\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
 
       if (this.activeFlips[auc.uuid] && this.activeFlips[auc.uuid].timesAppeared >= 7) this.hideFlips.push(auc.uuid);
       else if (this.activeFlips[auc.uuid]) this.activeFlips[auc.uuid].timesAppeared++;
@@ -121,7 +121,7 @@ module.exports = class AuctionHandler {
     let itOM = this.oneMillFlips.length > 10 ? 10 : this.oneMillFlips.length;
     for (let i = 0; i < itOM; i++) {
       let auc = this.oneMillFlips[i];
-      formatOneM += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}% (tax included)\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
+      formatOneM += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}%\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
 
       if (this.activeFlips[auc.uuid] && this.activeFlips[auc.uuid].timesAppeared >= 7) this.hideFlips.push(auc.uuid);
       else if (this.activeFlips[auc.uuid]) this.activeFlips[auc.uuid].timesAppeared++;
@@ -133,7 +133,7 @@ module.exports = class AuctionHandler {
     let itTM = this.twoMillFlips.length > 10 ? 10 : this.twoMillFlips.length;
     for (let i = 0; i < itTM; i++) {
       let auc = this.twoMillFlips[i];
-      formatTwoM += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}% (tax included)\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
+      formatTwoM += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}%\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
 
       if (this.activeFlips[auc.uuid] && this.activeFlips[auc.uuid].timesAppeared >= 7) this.hideFlips.push(auc.uuid);
       else if (this.activeFlips[auc.uuid]) this.activeFlips[auc.uuid].timesAppeared++;
@@ -145,7 +145,7 @@ module.exports = class AuctionHandler {
     let itFM = this.fiveMillFlips.length > 10 ? 10 : this.fiveMillFlips.length;
     for (let i = 0; i < itFM; i++) {
       let auc = this.fiveMillFlips[i];
-      formatFiveM += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}% (tax included)\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
+      formatFiveM += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}%\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
 
       if (this.activeFlips[auc.uuid] && this.activeFlips[auc.uuid].timesAppeared >= 7) this.hideFlips.push(auc.uuid);
       else if (this.activeFlips[auc.uuid]) this.activeFlips[auc.uuid].timesAppeared++;
@@ -157,7 +157,7 @@ module.exports = class AuctionHandler {
     let itTeM = this.tenMillFlips.length > 10 ? 10 : this.tenMillFlips.length;
     for (let i = 0; i < itTeM; i++) {
       let auc = this.tenMillFlips[i];
-      formatTenM += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}% (tax included)\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
+      formatTenM += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}%\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
 
       if (this.activeFlips[auc.uuid] && this.activeFlips[auc.uuid].timesAppeared >= 7) this.hideFlips.push(auc.uuid);
       else if (this.activeFlips[auc.uuid]) this.activeFlips[auc.uuid].timesAppeared++;
@@ -169,7 +169,7 @@ module.exports = class AuctionHandler {
     let itTwM = this.twentyMillFlips.length > 10 ? 10 : this.twentyMillFlips.length;
     for (let i = 0; i < itTwM; i++) {
       let auc = this.twentyMillFlips[i];
-      formatTwentyM += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}% (tax included)\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
+      formatTwentyM += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}%\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
 
       if (this.activeFlips[auc.uuid] && this.activeFlips[auc.uuid].timesAppeared >= 7) this.hideFlips.push(auc.uuid);
       else if (this.activeFlips[auc.uuid]) this.activeFlips[auc.uuid].timesAppeared++;
@@ -181,7 +181,10 @@ module.exports = class AuctionHandler {
     let itH = this.hundredFlips.length > 10 ? 10 : this.hundredFlips.length;
     for (let i = 0; i < itH; i++) {
       let auc = this.hundredFlips[i];
-      formatHundred += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}% (tax included)\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
+      formatHundred += `🔸 ${auc.item_name}\n\`/viewauction ${this.turnToValidId(auc.uuid)}\`\n\`\`\`apache\nProfit: ${auc.diff.toLocaleString("en")}\nPrice: ${auc.starting_bid.toLocaleString("en")}\nNextBIN: ${auc.next.toLocaleString("en")}\nReturn: ${(Math.round(auc.diff/auc.starting_bid*100)*100)/100}%\nRarity: ${auc.tier}\n\`\`\`\n`; //.toLocaleString("en")
+
+      this.hideFlips.push(auc.uuid);
+      this.activeFlips[auc.uuid] = { timesAppeared: 0, end: auc.end };
     }
 
     let fiveHundredF = new Discord.MessageEmbed()
@@ -247,7 +250,7 @@ module.exports = class AuctionHandler {
     twmChannel.send(twentyMillF);
 
     if (formatHundred !== "") {
-      let hChannel = guild.channels.cache.get("829786192068214844");
+      let hChannel = guild.channels.cache.get("835165562501333032");
       hChannel.send(hundredMF);
       hChannel.send(`Found new flip(s) with 100M+ profit! <@&835166494438195250>`)
     }
@@ -279,10 +282,16 @@ module.exports = class AuctionHandler {
 
         if (auc.item_lore.includes("§9")) {
           let enchants = auc.item_lore.split(/\\n+/g).join("").split("§9");
+          let found = false;
           for (const enchant of enchants) {
             for (const valuableEnchant of valuableEnchants) {
-              if (enchant.includes(valuableEnchant)) auc.group += " " + valuableEnchant;
+              if (enchant.includes(valuableEnchant)) {
+                auc.group += " " + valuableEnchant;
+                auc.item_name += " ⥤ __" + valuableEnchant + "__";
+                found = true;
+              }
             }
+            if (found) break;
           }
         }
 
@@ -362,7 +371,7 @@ module.exports = class AuctionHandler {
     if (toCheck.toLowerCase() === "enchanted book") return auc.hasOwnProperty("bin") && auc.bin && !auc.claimed
     else return auc.bin === true &&
       !auc.claimed && ["RARE", "EPIC", "LEGENDARY", "MYTHIC"].includes(auc.tier) &&
-      !toCheck.includes("◆") &&
+      (!toCheck.includes("◆") && !auc.item_name.toLowerCase().includes("music rune")) &&
       !auc.item_lore.toLowerCase().includes("cake soul") &&
       !blackListed.includes([...valuableReforges, ...reforges].includes(toCheck.split(" ")[0].toLowerCase()) ? toCheck.substr(toCheck.indexOf(" ") + 1) : toCheck.toLowerCase())
   }
@@ -373,7 +382,7 @@ const reforges = ["bizarre", "ominous", "simple", "strange", "pleasant", "shiny"
   "awkward", "rich", "fine", "neat", "hasty", "grand", "rapid", "deadly", "unreal", "smart", "clean", "fierce", "heavy", "light", "mythic",
   "titanic", "wise", "pure", "extremely", "perfect", "absolutly", "very", "shaded", "sweet", "silky", "bloody", "candied", "reinforced", "cubic", "warped",
   "undead", "ridiculous", "necrotic", "spiked", "loving", "giant", "ancient", "moil", "headstrong",
-  "precise", "fruitful", "magnetic", "fleet", "mithraic", "suspicious", "stellar", "jerry's", "dirty", "suspicious", "spiritual", "fair", "salty", "treacherous", "thicc"
+  "precise", "fruitful", "magnetic", "fleet", "mithraic", "suspicious", "stellar", "jerry's", "dirty", "suspicious", "spiritual", "fair", "salty", "treacherous"
 ];
 
 const valuableReforges = ["submerged", "renowned", "withered", "empowered", "blessed", "toil", "refined", "fabled", "gilded"];
@@ -397,3 +406,12 @@ const valuableEnchants = [
 const valuablePetItems = [ // Legendary: §6      Epic: §5       Rare: §3       Uncommon: §a     Common: §f 
   "§6Tier Boost", "§3Dwarf Turtle Shelmet", "§5Minos Relic",
 ];
+
+function toTitleCase(str) {
+  return str.replace(
+    /\w\S*/g,
+    function(txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    }
+  );
+}

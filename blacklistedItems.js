@@ -535,5 +535,6 @@ module.exports = [
   "chestplate of the rising sun",
   "leggings of the rising sun",
   "boots of the rising sun",
-  "skull chest++"
+  "skull chest++",
+  "lapis chest+"
 ];
