@@ -10,9 +10,7 @@ module.exports = class AuctionHandler {
   constructor(client) {
     this.client = client;
 
-    this.apiKeys = ["ae52b0e2-7a2f-4802-9d60-f184953a8557", "cc9fdfe3-844a-450e-92d9-85350acb371c", "58b11091-469c-4893-8e02-49b9033a177d", "994bb87c-fbcb-4898-ab6d-0c91de24cc05",
-      "cdfcb25b-1fdf-4dcf-9e26-7172058d499c"
-    ]
+    this.apiKeys = [] // Insert API keys here, no limit I think
     this.currentIndex = 0;
     this.calls = 0;
 
